@@ -1,5 +1,5 @@
-__author__ = "Wren J. R. (uberfastman)"
-__email__ = "wrenjr@yahoo.com"
+__author__ = "uberfastman"
+__email__ = "uberfastman@uberfastman.dev"
 # code snippets: https://github.com/cdtdev/ff_monte_carlo (originally written by https://github.com/cdtdev)
 
 import datetime

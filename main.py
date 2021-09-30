@@ -1,17 +1,18 @@
-__author__ = "Wren J. R. (uberfastman)"
-__email__ = "wrenjr@yahoo.com"
+__author__ = "uberfastman"
+__email__ = "uberfastman@uberfastman.dev"
 
 import getopt
-import os
 import re
-import time
 import sys
+import time
 import traceback
-import colorama
-from colorama import Fore, Style
+from pathlib import Path
 
+import colorama
 import pkg_resources
+from colorama import Fore, Style
 from pkg_resources import DistributionNotFound, VersionConflict
+from resources.documentation.usage import usage_message
 
 from integrations.drive_integration import GoogleDriveUploader
 from integrations.slack_integration import SlackMessenger
@@ -24,11 +25,11 @@ colorama.init()
 logger = get_logger()
 
 
-def main(argv):
+def get_options(argv):
     logger.debug("Running fantasy football metrics weekly report app with arguments:\n{0}".format(argv))
 
     dependencies = []
-    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "requirements.txt"), "r") as reqs:
+    with open(Path(__file__).parent / "requirements.txt", "r") as reqs:
         for line in reqs.readlines():
             if not line.startswith("#"):
                 dependencies.append(line.strip())
@@ -56,46 +57,17 @@ def main(argv):
                 "DEPENDENCY" if missing_dependency_count == 1 else "DEPENDENCIES"))
         sys.exit("...run aborted.")
 
-    usage_str = \
-        "\n" \
-        "Fantasy Football Report application usage:\n" \
-        "\n" \
-        "    python main.py [optional_parameters]\n" \
-        "\n" \
-        "  Options:\n" \
-        "      -h, --help                            Print command line usage message.\n" \
-        "      -a, --auto-run                        Automatically run the report using the default week.\n" \
-        "\n" \
-        "    Generate report:\n" \
-        "      -f, --fantasy-platform <platform>     Fantasy football platform on which league for report is hosted. Currently supports: \"yahoo\", \"fleaflicker\" \n" \
-        "      -l, --league-id <league_id>           Fantasy Football league ID.\n" \
-        "      -w, --week <chosen_week>              Chosen week for which to generate report.\n" \
-        "      -g, --game-id <chosen_game_id>        Chosen fantasy game id for which to generate report. Defaults to \"nfl\", which is interpreted as the current season if using Yahoo.\n" \
-        "      -y, --year <chosen_year>              Chosen year (season) of the league for which a report is being generated.\n" \
-        "\n" \
-        "    Configuration:\n" \
-        "      -c, --config-file <config_file_path>  System file path (including file name) for .ini file to be used for configuration.\n" \
-        "      -s, --save-data                       Save all retrieved data locally for faster future report generation.\n" \
-        "      -r, --refresh-web-data                Refresh all web data from external APIs (such as bad boy and beef data).\n" \
-        "      -p, --playoff-prob-sims               Number of Monte Carlo playoff probability simulations to run.\n" \
-        "      -b, --break-ties                      Break ties in metric rankings.\n" \
-        "      -q, --disqualify-ce                   Automatically disqualify teams ineligible for coaching efficiency metric.\n" \
-        "\n" \
-        "    For Developers:\n" \
-        "      -d, --dev-offline                     Run OFFLINE for development. Must have previously run report with -s option.\n" \
-        "      -t, --test                            Generate TEST report.\n"
-
     try:
         opts, args = getopt.getopt(argv, "hac:f:l:w:g:y:srp:bqtd")
     except getopt.GetoptError:
-        print(usage_str)
+        print(usage_message)
         sys.exit(2)
 
     options_dict = {}
     for opt, arg in opts:
         # help/manual
         if opt in ("-h", "--help"):
-            print(usage_str)
+            print(usage_message)
             sys.exit(0)
 
         # automatically run the report using the default week
@@ -141,8 +113,8 @@ def main(argv):
     return options_dict
 
 
-def select_league(auto_run, week, platform, league_id, game_id, season, refresh_web_data, playoff_prob_sims, break_ties, dq_ce,
-                  save_data, dev_offline, test):
+def select_league(auto_run, week, platform, league_id, game_id, season, refresh_web_data, playoff_prob_sims, break_ties,
+                  dq_ce, save_data, dev_offline, test):
     if not league_id:
         time.sleep(0.25)
         default = input("{0}Generate report for default league? ({1}y{0}/{2}n{0}) -> {3}".format(
@@ -197,8 +169,8 @@ def select_league(auto_run, week, platform, league_id, game_id, season, refresh_
                                          test=test)
         except IndexError:
             logger.error("The league ID you have selected is not valid.")
-            select_league(auto_run, week, platform, None, game_id, season, refresh_web_data, playoff_prob_sims, break_ties, dq_ce,
-                          save_data, dev_offline, test)
+            select_league(auto_run, week, platform, None, game_id, season, refresh_web_data, playoff_prob_sims,
+                          break_ties, dq_ce, save_data, dev_offline, test)
     elif default == "selected":
 
         if not week:
@@ -222,8 +194,8 @@ def select_league(auto_run, week, platform, league_id, game_id, season, refresh_
     else:
         logger.warning("You must select either \"y\" or \"n\".")
         time.sleep(0.25)
-        select_league(auto_run, week, platform, None, game_id, season, refresh_web_data, playoff_prob_sims, break_ties, dq_ce,
-                      save_data, dev_offline, test)
+        select_league(auto_run, week, platform, None, game_id, season, refresh_web_data, playoff_prob_sims, break_ties,
+                      dq_ce, save_data, dev_offline, test)
 
 
 def select_week(auto_run=False):
@@ -257,7 +229,7 @@ def select_week(auto_run=False):
 # RUN FANTASY FOOTBALL REPORT PROGRAM
 if __name__ == "__main__":
 
-    options = main(sys.argv[1:])
+    options = get_options(sys.argv[1:])
     logger.debug("Fantasy football metrics weekly report app run configuration options:\n{0}".format(options))
 
     # set local config (check for existence and access, create config.ini if does not exist or stop app if inaccessible)
@@ -267,7 +239,7 @@ if __name__ == "__main__":
         config = get_valid_config()
 
     # check to see if the current app is behind any commits, and provide option to update and re-run if behind
-    up_to_date = check_for_updates(options.get("auto_run", False))
+    check_for_updates(options.get("auto_run", False))
 
     report = select_league(
         options.get("auto_run", False),

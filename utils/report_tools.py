@@ -1,5 +1,5 @@
-__author__ = "Wren J. R. (uberfastman)"
-__email__ = "wrenjr@yahoo.com"
+__author__ = "uberfastman"
+__email__ = "uberfastman@uberfastman.dev"
 
 import os
 import pkgutil
@@ -123,19 +123,24 @@ def get_valid_config(config_file="config.ini"):
             return config
         else:
             logger.error(
-                "Unable to access configuration file \"config.ini\". Please check that file permissions are properly set.")
+                "Unable to access configuration file \"config.ini\". Please check that file permissions are properly "
+                "set."
+            )
             sys.exit("...run aborted.")
     else:
         logger.debug("Configuration file \"config.ini\" not found.")
         create_config = input(
-            "{2}Configuration file \"config.ini\" not found. {1}Do you wish to create one? {0}({1}y{0}/{2}n{0}) -> {3}".format(
+            "{2}Configuration file \"config.ini\" not found. {1}Do you wish to create one? {0}({1}y{0}/{2}n{0}) -> "
+            "{3}".format(
                 Fore.YELLOW, Fore.GREEN, Fore.RED, Style.RESET_ALL
             ))
-        if create_config == "y":
+        if create_config.lower() == "y":
             return create_config_from_template(config, root_directory, config_file_path)
-        if create_config == "n":
+        if create_config.lower() == "n":
             logger.error(
-                "Configuration file \"config.ini\" not found. Please make sure that it exists in project root directory.")
+                "Configuration file \"config.ini\" not found. Please make sure that it exists in project root "
+                "directory."
+            )
             sys.exit("...run aborted.")
         else:
             logger.warning("Please only select \"y\" or \"n\".")

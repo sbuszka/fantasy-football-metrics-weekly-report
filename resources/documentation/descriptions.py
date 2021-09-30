@@ -1,5 +1,5 @@
-__author__ = "Wren J. R. (uberfastman)"
-__email__ = "wrenjr@yahoo.com"
+__author__ = "uberfastman"
+__email__ = "uberfastman@uberfastman.dev"
 
 league_standings = "Overall standings for the chosen week. Dynamically adjusts information based on whether a league " \
                    "uses only waivers or has a FAAB (free agent acquisition budget). Data marked with an " \
@@ -83,9 +83,9 @@ beef_rankings = "The Beef ranking is a \"just-for-fun\" metric with a made-up un
 covid_19_risk = "The COVID-19 risk ranking is a \"just-for-fun\" metric that pulls NFL player transaction history " \
                 "from <a href=\"https://sportsdata.usatoday.com/football/nfl/transactions\" color=blue><u>USA Today " \
                 "Sports NFL player transactions list</u></a>, and then assigns a risk factor to every player based " \
-                "whether or not that player is currently on the Reserve/COVID-19 list, whether or not that player has " \
-                "previously been on the Reserve/COVID-19 list, how many teammates of that player have been on the " \
-                "Reserve/COVID-19 list, and how recently the last teammate of that player was on the " \
+                "whether or not that player is currently on the Reserve/COVID-19 list, whether or not that player " \
+                "has previously been on the Reserve/COVID-19 list, how many teammates of that player have been on " \
+                "the Reserve/COVID-19 list, and how recently the last teammate of that player was on the " \
                 "Reserve/COVID-19 list."
 
 weekly_top_scorers = "Running list of each week's highest scoring team. Can be used for weekly highest points payouts."
